@@ -75,6 +75,31 @@ class UpdatePage extends BaseUpdatePage implements UpdatePageInterface
         $this->getElement('on_hand')->setValue($amount);
     }
 
+    public function selectOption(string $optionName, string $optionValue): void
+    {
+        $this->getElement('option_values', ['%optionName%' => $optionName])->selectOption($optionValue);
+    }
+
+    public function isShowInShopButtonDisabled(): bool
+    {
+        return $this->getElement('show_product_single_button')->hasClass('disabled');
+    }
+
+    public function showProductInChannel(string $channel): void
+    {
+        $this->getElement('show_product_dropdown')->clickLink($channel);
+    }
+
+    public function showProductInSingleChannel(): void
+    {
+        $this->getElement('show_product_single_button')->click();
+    }
+
+    public function isSelectedOptionValueOnPage(string $optionName, string $valueName): bool
+    {
+        return $this->getDocument()->find('css', sprintf('option:contains("%s")', $valueName))->isSelected();
+    }
+
     public function isShippingRequired(): bool
     {
         return $this->getElement('shipping_required')->isChecked();
@@ -86,10 +111,13 @@ class UpdatePage extends BaseUpdatePage implements UpdatePageInterface
             'code' => '#sylius_product_variant_code',
             'name' => '#sylius_product_variant_translations_%language%_name',
             'on_hand' => '#sylius_product_variant_onHand',
+            'option_values' => '#sylius_product_variant_optionValues_%optionName%',
             'original_price' => '#sylius_product_variant_channelPricings > .field:contains("%channelName%") input[name$="[originalPrice]"]',
             'price' => '#sylius_product_variant_channelPricings > .field:contains("%channelName%") input[name$="[price]"]',
             'pricing_configuration' => '#sylius_calculator_container',
             'shipping_required' => '#sylius_product_variant_shippingRequired',
+            'show_product_dropdown' => '.scrolling.menu',
+            'show_product_single_button' => 'a:contains("Show product in shop page")',
             'tracked' => '#sylius_product_variant_tracked',
         ]);
     }

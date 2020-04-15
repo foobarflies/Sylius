@@ -19,13 +19,15 @@ use Sylius\Component\Currency\Model\CurrencyInterface;
 
 interface UpdatePageInterface extends BaseUpdatePageInterface
 {
-    public function isCodeDisabled(): bool;
-
-    public function specifyPrice(int $price): void;
-
     public function disableTracking(): void;
 
     public function enableTracking(): void;
+
+    public function isCodeDisabled(): bool;
+
+    public function isSelectedOptionValueOnPage(string $optionName, string $valueName): bool;
+
+    public function isShippingRequired(): bool;
 
     public function isTracked(): bool;
 
@@ -37,7 +39,15 @@ interface UpdatePageInterface extends BaseUpdatePageInterface
 
     public function getNameInLanguage(string $language): string;
 
+    public function selectOption(string $optionName, string $optionValue): void;
+
+    public function isShowInShopButtonDisabled(): bool;
+
+    public function showProductInChannel(string $channel): void;
+
+    public function showProductInSingleChannel(): void;
+
     public function specifyCurrentStock(int $amount): void;
 
-    public function isShippingRequired(): bool;
+    public function specifyPrice(int $price): void;
 }

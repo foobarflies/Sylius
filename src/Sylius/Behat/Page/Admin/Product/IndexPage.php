@@ -19,7 +19,7 @@ use Sylius\Behat\Service\Accessor\TableAccessorInterface;
 use Sylius\Behat\Service\Checker\ImageExistenceCheckerInterface;
 use Symfony\Component\Routing\RouterInterface;
 
-final class IndexPage extends CrudIndexPage implements IndexPageInterface
+class IndexPage extends CrudIndexPage implements IndexPageInterface
 {
     /** @var ImageExistenceCheckerInterface */
     private $imageExistenceChecker;
@@ -50,10 +50,19 @@ final class IndexPage extends CrudIndexPage implements IndexPageInterface
         return $this->imageExistenceChecker->doesImageWithUrlExist($imageUrl, 'sylius_admin_product_thumbnail');
     }
 
+    public function showProductPage(string $productName): void
+    {
+        $tableAccessor = $this->getTableAccessor();
+        $table = $this->getElement('table');
+        $row = $tableAccessor->getRowWithFields($table, ['name' => $productName]);
+        $field = $tableAccessor->getFieldFromRow($table, $row, 'actions');
+        $field->clickLink('Details');
+    }
+
     protected function getDefinedElements(): array
     {
         return array_merge(parent::getDefinedElements(), [
-            'taxon_filter' => '.item a:contains("%taxon%")',
+            'taxon_filter' => '.sylius-tree__item a:contains("%taxon%")',
         ]);
     }
 }

@@ -23,6 +23,19 @@ Sylius Documentation
 
    For tips on using only some bundles of Sylius head to Bundles and Components docs.
 
+Getting Started with Sylius
+---------------------------
+
+The essential guide for the Sylius newcomers that want to know it's most important features, quickly see the power of customization
+and run their first Sylius shop within a few hours.
+
+.. toctree::
+   :hidden:
+
+   getting-started-with-sylius/index
+
+.. include:: /getting-started-with-sylius/map.rst.inc
+
 The Book
 --------
 
@@ -82,18 +95,31 @@ The Customization Guide
 
 .. include:: /customization/map.rst.inc
 
-Sylius Plugins
---------------
+Theming Guide
+-------------
 
-The collection of Sylius Plugins together with the guide on Plugins development.
+:doc:`The Theming Guide </theming/index>` is useful when trying do develop custom layout for Sylius shops.
+
+.. toctree::
+   :hidden:
+
+   theming/index
+
+.. include:: /theming/map.rst.inc
+
+Plugin Development Guide
+------------------------
+
+If you're wondering how to share awesome features you have/want to have for Sylius with the Open Source community,
+here you will find a comprehensive guide to plugins development from the idea to sharing the plugin with the world.
 Remember that you can use all the :doc:`customization techniques </customization/index>` in Plugins.
 
 .. toctree::
    :hidden:
 
-   plugins/index
+   plugin-development-guide/index
 
-.. include:: /plugins/map.rst.inc
+.. include:: /plugin-development-guide/map.rst.inc
 
 The Cookbook
 ------------
@@ -105,10 +131,10 @@ The Cookbook
 
    cookbook/index
 
-The REST API Reference
-----------------------
+The Sylius API
+--------------
 
-:doc:`The API guide </api/index>` covers the REST API of Sylius platform.
+In :doc:`the Sylius API chapter </api/index>` you'll understand both the new Sylius API and the old Admin API.
 
 .. toctree::
    :hidden:

@@ -23,6 +23,21 @@ class IndexPage extends BaseIndexPage implements IndexPageInterface
         $this->getElement('filter_state')->selectOption($shipmentState);
     }
 
+    public function chooseChannelFilter(string $channelName): void
+    {
+        $this->getElement('filter_channel')->selectOption($channelName);
+    }
+
+    public function isShipmentWithOrderNumberInPosition(string $orderNumber, int $position): bool
+    {
+        $result = $this->getElement('shipment_in_given_position', [
+                '%position%' => $position,
+                '%orderNumber%' => $orderNumber,
+            ]);
+
+        return $result !== null;
+    }
+
     public function shipShipmentOfOrderWithNumber(string $orderNumber): void
     {
         $this->getField($orderNumber, 'actions')->pressButton('Ship');
@@ -33,35 +48,51 @@ class IndexPage extends BaseIndexPage implements IndexPageInterface
         return $this->getField($orderNumber, 'state')->getText();
     }
 
-    private function getField(string $orderNumber, string $fieldName): NodeElement
+    public function showOrderPageForNthShipment(int $position): void
     {
-        $tableAccessor = $this->getTableAccessor();
-        $table = $this->getElement('table');
-
-        $row = $tableAccessor->getRowWithFields($table, ['number' =>$orderNumber]);
-
-        return $field = $tableAccessor->getFieldFromRow($table, $row, $fieldName);
+        $this->getOrderLinkForRow($position)->clickLink('#');
     }
 
-    public function showOrderPageForNthShipment(int $shipmentNumber): void
+    public function shipShipmentOfOrderWithTrackingCode(string $orderNumber, string $trackingCode): void
     {
-        $this->getActionsForRow($shipmentNumber)->clickLink('Show order details');
+        /** @var NodeElement $actions */
+        $actions = $this->getField($orderNumber, 'actions');
+
+        $actions->fillField('sylius_shipment_ship_tracking', $trackingCode);
+        $actions->pressButton('Ship');
+    }
+
+    public function getShippedAtDate(string $orderNumber): string
+    {
+        return $this->getField($orderNumber, 'shippedAt')->getText();
     }
 
     protected function getDefinedElements(): array
     {
         return array_merge(parent::getDefinedElements(), [
+            'filter_channel' => '#criteria_channel',
             'filter_state' => '#criteria_state',
+            'shipment_in_given_position' => 'table tbody tr:nth-child(%position%) td:contains("%orderNumber%")',
         ]);
     }
 
-    private function getActionsForRow(int $shipmentNumber): NodeElement
+    private function getField(string $orderNumber, string $fieldName): NodeElement
+    {
+        $tableAccessor = $this->getTableAccessor();
+        $table = $this->getElement('table');
+
+        $row = $tableAccessor->getRowWithFields($table, ['number' => $orderNumber]);
+
+        return $tableAccessor->getFieldFromRow($table, $row, $fieldName);
+    }
+
+    private function getOrderLinkForRow(int $shipmentNumber): NodeElement
     {
         $tableAccessor = $this->getTableAccessor();
         $table = $this->getElement('table');
 
         $row = $tableAccessor->getRowsWithFields($table, [])[$shipmentNumber];
 
-        return $field = $tableAccessor->getFieldFromRow($table, $row, 'actions');
+        return $row->find('css', 'td:nth-child(3)');
     }
 }

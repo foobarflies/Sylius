@@ -23,14 +23,14 @@ then clone your fork to you local destination:
 
 .. code-block:: bash
 
-    $ git clone git@github.com:YOUR_USERNAME/Sylius.git
+    git clone git@github.com:YOUR_USERNAME/Sylius.git
 
 Under the name ``origin`` you will have from now on the access to your fork.
 Add also the main repository as the ``upstream`` remote.
 
 .. code-block:: bash
 
-    $ git remote add upstream git@github.com:Sylius/Sylius.git
+    git remote add upstream git@github.com:Sylius/Sylius.git
 
 
 Choose the right Base Branch
@@ -38,18 +38,18 @@ Choose the right Base Branch
 
 Before starting to work on a patch, you must determine on which branch you need to work. It will be:
 
-* ``1.3`` or ``1.4``, if you are fixing or adding docs for features that exist in one of those versions,
-* ``master``, if you are documenting a new feature, that was not in ``1.3`` nor in ``1.4``
+* ``1.4`` or ``1.5``, if you are fixing or adding docs for features that exist in one of those versions,
+* ``master``, if you are documenting a new feature, that was not in ``1.4`` nor in ``1.5``
 
 .. note::
 
-    All bug fixes merged into the ``1.3`` and ``1.4`` maintenance branches are also merged into ``master`` on a regular basis.
+    All bug fixes merged into the ``1.4`` and ``1.5`` maintenance branches are also merged into ``master`` on a regular basis.
 
 Create a dedicated branch for your changes (for organization):
 
 .. code-block:: bash
 
-    $ git checkout -b docs/improving_foo_and_bar
+    git checkout -b docs/improving_foo_and_bar
 
 You can now make your changes directly to this branch and commit them.
 Remember to name your commits descriptively, keep them possibly small, with just unitary changes (such that change something only in one part of the docs, not everywhere).
@@ -61,27 +61,37 @@ Your pull request will be reviewed, you will be asked to apply fixes if necessar
 Testing Documentation
 ~~~~~~~~~~~~~~~~~~~~~
 
-To test the documentation before a commit you need to install Sphinx.
+To test the documentation before a commit you need to install Sphinx and needed dependencies.
 
 .. tip::
 
     Official Sphinx installation guide : `www.sphinx-doc.org <https://www.sphinx-doc.org/en/master/usage/installation.html>`_
 
-There are two ways to install Sphinx: via `Homebrew <https://brew.sh/>`_ or via `Pip`_.
-
-• Sphinx installation via Homebrew
+Our recommendation is to install ``Sphinx`` via `Pip`_.
 
 .. code-block:: bash
 
-    $ brew install sphinx-doc
+    pip3 install --no-cache-dir -r ./docs/requirements.txt
 
-• Sphinx installation via Pip
+Then run
 
 .. code-block:: bash
 
-    $ pip install -U sphinx
+    sphinx-build -b html ./docs ./docs/build
 
-Then in the ``docs`` directory run ``sphinx-build -b html . build`` and view the generated HTML files in the ``build`` directory. You can open them in your browser and check how they look!
+and view the generated HTML files in the ``docs/build`` directory. You can open them in your browser and check how they look!
+
+.. warning::
+
+    If you have problems with using ``Sphinx``, please make sure that you're using Python 3.
+    Using ``pip``, try to uninstall old dependencies and install latest version Python and Sphinx.
+
+    .. code-block:: bash
+
+        pip uninstall sphinx
+        pip3 uninstall sphinx
+
+    If you have installed old sphinx by your operating system tools like: brew, apt-get or yum, you have to uninstall it too.
 
 Creating a Pull Request
 ~~~~~~~~~~~~~~~~~~~~~~~

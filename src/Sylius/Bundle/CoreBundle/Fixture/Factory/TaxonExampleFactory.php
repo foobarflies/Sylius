@@ -65,9 +65,14 @@ class TaxonExampleFactory extends AbstractExampleFactory implements ExampleFacto
      */
     public function create(array $options = []): TaxonInterface
     {
+        return $this->createTaxon($options);
+    }
+
+    protected function createTaxon(array $options = [], ?TaxonInterface $parentTaxon = null): ?TaxonInterface
+    {
         $options = $this->optionsResolver->resolve($options);
 
-        /** @var TaxonInterface $taxon */
+        /** @var TaxonInterface|null $taxon */
         $taxon = $this->taxonRepository->findOneBy(['code' => $options['code']]);
 
         if (null === $taxon) {
@@ -76,6 +81,10 @@ class TaxonExampleFactory extends AbstractExampleFactory implements ExampleFacto
         }
 
         $taxon->setCode($options['code']);
+
+        if (null !== $parentTaxon) {
+            $taxon->setParent($parentTaxon);
+        }
 
         // add translation for each defined locales
         foreach ($this->getLocales() as $localeCode) {
@@ -88,7 +97,7 @@ class TaxonExampleFactory extends AbstractExampleFactory implements ExampleFacto
         }
 
         foreach ($options['children'] as $childOptions) {
-            $taxon->addChild($this->create($childOptions));
+            $this->createTaxon($childOptions, $taxon);
         }
 
         return $taxon;

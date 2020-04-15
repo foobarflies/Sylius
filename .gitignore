@@ -2,6 +2,7 @@
 /public/css
 /public/js
 /public/media
+/public/build
 !/public/media/image/.gitkeep
 
 /app/config/parameters.yml
@@ -28,10 +29,6 @@
 /vendor/
 ###< symfony/framework-bundle ###
 
-###> symfony/web-server-bundle ###
-/.web-server-pid
-###< symfony/web-server-bundle ###
-
 ###> friendsofphp/php-cs-fixer ###
 /.php_cs
 /.php_cs.cache
@@ -40,3 +37,8 @@
 ###> phpunit/phpunit ###
 /phpunit.xml
 ###< phpunit/phpunit ###
+
+###> lexik/jwt-authentication-bundle ###
+/config/jwt/*.pem
+!/config/jwt/*-test.pem
+###< lexik/jwt-authentication-bundle ###

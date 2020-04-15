@@ -61,11 +61,9 @@ class OrderRepository extends BaseOrderRepository implements OrderRepositoryInte
      */
     public function createByCustomerIdQueryBuilder($customerId): QueryBuilder
     {
-        return $this->createQueryBuilder('o')
+        return $this->createListQueryBuilder()
             ->andWhere('o.customer = :customerId')
-            ->andWhere('o.state != :state')
             ->setParameter('customerId', $customerId)
-            ->setParameter('state', OrderInterface::STATE_CART)
         ;
     }
 
@@ -233,6 +231,19 @@ class OrderRepository extends BaseOrderRepository implements OrderRepositoryInte
         ;
     }
 
+    public function getTotalPaidSalesForChannel(ChannelInterface $channel): int
+    {
+        return (int) $this->createQueryBuilder('o')
+            ->select('SUM(o.total)')
+            ->andWhere('o.channel = :channel')
+            ->andWhere('o.paymentState = :state')
+            ->setParameter('channel', $channel)
+            ->setParameter('state', OrderPaymentStates::STATE_PAID)
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -244,6 +255,19 @@ class OrderRepository extends BaseOrderRepository implements OrderRepositoryInte
             ->andWhere('o.state = :state')
             ->setParameter('channel', $channel)
             ->setParameter('state', OrderInterface::STATE_FULFILLED)
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+    }
+
+    public function countPaidByChannel(ChannelInterface $channel): int
+    {
+        return (int) $this->createQueryBuilder('o')
+            ->select('COUNT(o.id)')
+            ->andWhere('o.channel = :channel')
+            ->andWhere('o.paymentState = :state')
+            ->setParameter('channel', $channel)
+            ->setParameter('state', OrderPaymentStates::STATE_PAID)
             ->getQuery()
             ->getSingleScalarResult()
         ;

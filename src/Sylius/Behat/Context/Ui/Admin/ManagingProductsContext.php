@@ -103,7 +103,7 @@ final class ManagingProductsContext implements Context
     }
 
     /**
-     * @Given I want to create a new simple product
+     * @When I want to create a new simple product
      */
     public function iWantToCreateANewSimpleProduct()
     {
@@ -111,9 +111,9 @@ final class ManagingProductsContext implements Context
     }
 
     /**
-     * @Given I want to create a new configurable product
+     * @When I want to create a new configurable product
      */
-    public function iWantToCreateANewConfigurableProduct()
+    public function iWantToCreateANewConfigurableProduct(): void
     {
         $this->createConfigurableProductPage->open();
     }
@@ -130,14 +130,17 @@ final class ManagingProductsContext implements Context
     }
 
     /**
+     * @When I do not name it
      * @When I name it :name in :language
      * @When I rename it to :name in :language
      */
-    public function iRenameItToIn($name, $language)
+    public function iRenameItToIn(?string $name = null, ?string $language = null): void
     {
-        $currentPage = $this->resolveCurrentPage();
+        if ($name !== null && $language !== null) {
+            $currentPage = $this->resolveCurrentPage();
 
-        $currentPage->nameItIn($name, $language);
+            $currentPage->nameItIn($name, $language);
+        }
     }
 
     /**
@@ -217,6 +220,22 @@ final class ManagingProductsContext implements Context
     public function iSetItsSlugToIn(?string $slug = null, $language = 'en_US')
     {
         $this->createSimpleProductPage->specifySlugIn($slug, $language);
+    }
+
+    /**
+     * @When I choose to show this product in the :channel channel
+     */
+    public function iChooseToShowThisProductInTheChannel(string $channel): void
+    {
+        $this->updateSimpleProductPage->showProductInChannel($channel);
+    }
+
+    /**
+     * @When I choose to show this product in this channel
+     */
+    public function iChooseToShowThisProductInThisChannel(): void
+    {
+        $this->updateSimpleProductPage->showProductInSingleChannel();
     }
 
     /**
@@ -321,11 +340,12 @@ final class ManagingProductsContext implements Context
     }
 
     /**
-     * @When I switch the way products are sorted by :field
+     * @When I switch the way products are sorted :sortType by :field
      * @When I start sorting products by :field
-     * @Given the products are already sorted by :field
+     * @When the products are already sorted :sortType by :field
+     * @When I sort the products :sortType by :field
      */
-    public function iSortProductsBy($field)
+    public function iSortProductsBy(string $field): void
     {
         $this->indexPage->sortBy($field);
     }
@@ -399,9 +419,9 @@ final class ManagingProductsContext implements Context
     }
 
     /**
-     * @Then the code field should be disabled
+     * @Then I should not be able to edit its code
      */
-    public function theCodeFieldShouldBeDisabled()
+    public function iShouldNotBeAbleToEditItsCode(): void
     {
         $currentPage = $this->resolveCurrentPage();
 
@@ -534,7 +554,7 @@ final class ManagingProductsContext implements Context
     }
 
     /**
-     * @Given product with :element :value should not be added
+     * @Then product with :element :value should not be added
      */
     public function productWithNameShouldNotBeAdded($element, $value)
     {
@@ -865,9 +885,9 @@ final class ManagingProductsContext implements Context
     /**
      * @When I set the position of :productName to :position
      */
-    public function iSetThePositionOfTo($productName, $position)
+    public function iSetThePositionOfTo(string $productName, string $position): void
     {
-        $this->indexPerTaxonPage->setPositionOfProduct($productName, (int) $position);
+        $this->indexPerTaxonPage->setPositionOfProduct($productName, $position);
     }
 
     /**
@@ -985,6 +1005,41 @@ final class ManagingProductsContext implements Context
     public function iShouldBeOnTheVariantGenerationPageForThisProduct(ProductInterface $product): void
     {
         Assert::true($this->variantGeneratePage->isOpen(['productId' => $product->getId()]));
+    }
+
+    /**
+     * @Then I should see inventory of this product
+     */
+    public function iShouldSeeInventoryOfThisProduct(): void
+    {
+        Assert::true($this->updateSimpleProductPage->hasInventoryTab());
+    }
+
+    /**
+     * @Then I should not see inventory of this product
+     */
+    public function iShouldNotSeeInventoryOfThisProduct(): void
+    {
+        Assert::false($this->updateConfigurableProductPage->hasInventoryTab());
+    }
+
+    /**
+     * @Then I should be notified that the position :invalidPosition is invalid
+     */
+    public function iShouldBeNotifiedThatThePositionIsInvalid(string $invalidPosition): void
+    {
+        $this->notificationChecker->checkNotification(
+            sprintf('The position "%s" is invalid.', $invalidPosition),
+            NotificationType::failure()
+        );
+    }
+
+    /**
+     * @Then I should not be able to show this product in shop
+     */
+    public function iShouldNotBeAbleToShowThisProductInShop(): void
+    {
+        Assert::true($this->updateSimpleProductPage->isShowInShopButtonDisabled());
     }
 
     /**
